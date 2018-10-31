@@ -5,27 +5,25 @@ const test = require('ava');
 const execa = require('execa');
 const tempy = require('tempy');
 const binCheck = require('bin-check');
-const BinBuild = require('bin-build');
+const binBuild = require('bin-build');
 const compareSize = require('compare-size');
 const readChunk = require('read-chunk');
 const isWebp = require('is-webp');
+const bin = require('..');
 
-test.cb('rebuild the gif2webp binaries', t => {
+test('rebuild the gif2webp binaries', async t => {
 	const tmp = tempy.directory();
 
-	new BinBuild()
-		.src('https://github.com/webmproject/libwebp/archive/v0.6.0.zip')
-		.cmd(`mkdir -p ${tmp}`)
-		.cmd(`make -f makefile.unix examples/gif2webp && mv ./examples/gif2webp ${path.join(tmp, 'gif2webp')}`)
-		.run(err => {
-			t.ifError(err);
-			t.true(fs.existsSync(path.join(tmp, 'gif2webp')));
-			t.end();
-		});
+	await binBuild.url('https://github.com/webmproject/libwebp/archive/v0.6.0.zip', [
+		`mkdir -p ${tmp}`,
+		`make -f makefile.unix examples/gif2webp && mv ./examples/gif2webp ${path.join(tmp, 'gif2webp')}`
+	]);
+
+	t.true(fs.existsSync(path.join(tmp, 'gif2webp')));
 });
 
 test('return path to binary and verify that it is working', async t => {
-	t.true(await binCheck(require('../'), ['-help']));
+	t.true(await binCheck(bin, ['-help']));
 });
 
 test('convert a GIF to WebP', async t => {
@@ -38,7 +36,7 @@ test('convert a GIF to WebP', async t => {
 		dest
 	];
 
-	await execa(require('../'), args);
+	await execa(bin, args);
 	const res = await compareSize(src, dest);
 
 	t.true(res[dest] < res[src]);
