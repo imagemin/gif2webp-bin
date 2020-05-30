@@ -1,9 +1,13 @@
 sudo: false
 language: node_js
 node_js:
+  - '14'
+  - '12'
   - '10'
-  - '8'
-  - '6'
+os:
+  - linux
+  - osx
+osx_image: xcode10
 addons:
   apt:
     packages:
