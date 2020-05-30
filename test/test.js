@@ -14,7 +14,7 @@ const bin = require('..');
 test('rebuild the gif2webp binaries', async t => {
 	const temporary = tempy.directory();
 
-	await binBuild.url('https://github.com/webmproject/libwebp/archive/v0.6.0.zip', [
+	await binBuild.file(path.resolve(__dirname, '../vendor/source/libwebp-1.1.0.tar.gz'), [
 		`mkdir -p ${temporary}`,
 		`make -f makefile.unix examples/gif2webp && mv ./examples/gif2webp ${path.join(temporary, 'gif2webp')}`
 	]);
