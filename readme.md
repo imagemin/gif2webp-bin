@@ -1,14 +1,12 @@
-# gif2webp-bin ![GitHub Actions Status](https://github.com/imagemin/gif2webp-bin/workflows/test/badge.svg?branch=master)
+# gif2webp-bin
 
 > [WebP](https://developers.google.com/speed/webp/) is a modern image format that provides superior lossless and lossy compression for images on the web. Using WebP, webmasters and web developers can create smaller, richer images that make the web faster.
-
 
 ## Install
 
 ```
 $ npm install --save gif2webp-bin
 ```
-
 
 ## Usage
 
@@ -21,7 +19,6 @@ execFile(gif2webp, ['input.gif', '-o', 'outout.webp'], () => {
 });
 ```
 
-
 ## CLI
 
 ```
@@ -31,8 +28,3 @@ $ npm install --global gif2webp-bin
 ```
 $ gif2webp --help
 ```
-
-
-## License
-
-MIT © [Imagemin](https://github.com/imagemin)
