@@ -1,22 +1,30 @@
-'use strict';
-const fs = require('fs');
-const path = require('path');
-const test = require('ava');
-const execa = require('execa');
-const tempy = require('tempy');
-const binCheck = require('bin-check');
-const binBuild = require('bin-build');
-const compareSize = require('compare-size');
-const readChunk = require('read-chunk');
-const isWebp = require('is-webp');
-const bin = require('..');
+import fs from 'node:fs';
+import path from 'node:path';
+import process from 'node:process';
+import {fileURLToPath} from 'node:url';
+import test from 'ava';
+import execa from 'execa';
+import tempy from 'tempy';
+import binCheck from 'bin-check';
+import binBuild from 'bin-build';
+import compareSize from 'compare-size';
+import readChunk from 'read-chunk';
+import isWebp from 'is-webp';
+import bin from '../index.js';
 
 test('rebuild the gif2webp binaries', async t => {
-	const temporary = tempy.directory();
+	// Skip the test on Windows
+	if (process.platform === 'win32') {
+		t.pass();
+		return;
+	}
 
-	await binBuild.file(path.resolve(__dirname, '../vendor/source/libwebp-1.1.0.tar.gz'), [
+	const temporary = tempy.directory();
+	const source = fileURLToPath(new URL('../vendor/source/libwebp-1.1.0.tar.gz', import.meta.url));
+
+	await binBuild.file(source, [
 		`mkdir -p ${temporary}`,
-		`make -f makefile.unix examples/gif2webp && mv ./examples/gif2webp ${path.join(temporary, 'gif2webp')}`
+		`make -f makefile.unix examples/gif2webp && mv ./examples/gif2webp ${path.join(temporary, 'gif2webp')}`,
 	]);
 
 	t.true(fs.existsSync(path.join(temporary, 'gif2webp')));
@@ -28,12 +36,12 @@ test('return path to binary and verify that it is working', async t => {
 
 test('convert a GIF to WebP', async t => {
 	const temporary = tempy.directory();
-	const src = path.join(__dirname, 'fixtures/test.gif');
+	const src = fileURLToPath(new URL('fixtures/test.gif', import.meta.url));
 	const dest = path.join(temporary, 'test.webp');
 	const args = [
 		src,
 		'-o',
-		dest
+		dest,
 	];
 
 	await execa(bin, args);
