@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-'use strict';
-const {spawn} = require('child_process');
-const gif2webp = require('.');
+import {spawn} from 'node:child_process';
+import process from 'node:process';
+import gif2webp from '.';
 
 const input = process.argv.slice(2);
 
