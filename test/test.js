@@ -3,12 +3,12 @@ import path from 'node:path';
 import process from 'node:process';
 import {fileURLToPath} from 'node:url';
 import test from 'ava';
-import execa from 'execa';
-import tempy from 'tempy';
+import {execa} from 'execa';
+import {temporaryDirectory} from 'tempy';
 import binCheck from 'bin-check';
 import binBuild from 'bin-build';
 import compareSize from 'compare-size';
-import readChunk from 'read-chunk';
+import {readChunk} from 'read-chunk';
 import isWebp from 'is-webp';
 import bin from '../index.js';
 
@@ -19,7 +19,7 @@ test('rebuild the gif2webp binaries', async t => {
 		return;
 	}
 
-	const temporary = tempy.directory();
+	const temporary = temporaryDirectory();
 	const source = fileURLToPath(new URL('../vendor/source/libwebp-1.1.0.tar.gz', import.meta.url));
 
 	await binBuild.file(source, [
@@ -35,7 +35,7 @@ test('return path to binary and verify that it is working', async t => {
 });
 
 test('convert a GIF to WebP', async t => {
-	const temporary = tempy.directory();
+	const temporary = temporaryDirectory();
 	const src = fileURLToPath(new URL('fixtures/test.gif', import.meta.url));
 	const dest = path.join(temporary, 'test.webp');
 	const args = [
@@ -48,5 +48,8 @@ test('convert a GIF to WebP', async t => {
 	const result = await compareSize(src, dest);
 
 	t.true(result[dest] < result[src]);
-	t.true(isWebp(await readChunk(dest, 0, 12)));
+	t.true(isWebp(await readChunk(dest, {
+		length: 12,
+		startPosition: 0,
+	})));
 });
